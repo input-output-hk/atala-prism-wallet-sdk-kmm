@@ -48,6 +48,10 @@ android {
     }
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
 
     // Android
@@ -66,7 +70,8 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:2.1.3")
 
     // WalletSDK
-    implementation(project(":atala-prism-sdk"))
+    // implementation(project(":atala-prism-sdk"))
+    implementation("io.iohk.atala.prism.walletsdk:atala-prism-sdk:1.0.0-alpha")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     // Unit Tests

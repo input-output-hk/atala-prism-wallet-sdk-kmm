@@ -79,6 +79,14 @@ allprojects {
         }
     }
 
+    if (this.name != "sampleapp") {
+        apply(plugin = "org.gradle.maven-publish")
+        publishing {
+            repositories {
+                mavenLocal()
+            }
+        }
+    }
 //    apply(plugin = "org.gradle.maven-publish")
 //    publishing {
 //        repositories {
