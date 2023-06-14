@@ -1,11 +1,19 @@
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import java.net.URL
 
 val currentModuleName: String = "AtalaPrismSDK"
 val os: OperatingSystem = OperatingSystem.current()
 val apolloVersion = project.property("apollo_version")
 val didpeerVersion = project.property("didpeer_version")
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-base:1.8.20")
+    }
+}
 
 plugins {
     id("com.squareup.sqldelight")
@@ -215,6 +223,11 @@ tasks.withType<DokkaTask>().configureEach {
     description = "This is a Kotlin Multiplatform implementation of AtalaPrismSDK"
     dokkaSourceSets {
         configureEach {
+            perPackageOption {
+                matchingRegex.set("io.iohk.atala.prism.walletsdk.castor.antlrgrammar")
+                suppress.set(true)
+                documentedVisibilities.set(setOf())
+            }
             jdkVersion.set(11)
             languageVersion.set("1.7.20")
             apiVersion.set("2.0")
@@ -249,6 +262,9 @@ tasks.withType<DokkaTask>().configureEach {
                 url.set(URL("https://kotlinlang.org/api/kotlinx.coroutines/"))
             }
         }
+    }
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+        this.templatesDir = projectDir.resolve("dokka").resolve("templates")
     }
 }
 

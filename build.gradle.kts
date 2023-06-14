@@ -8,7 +8,7 @@ plugins {
     id("maven-publish")
     id("dev.petuska.npm.publish") version "3.2.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    id("org.jetbrains.dokka") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.8.20"
 }
 
 buildscript {
@@ -20,6 +20,7 @@ buildscript {
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
+        classpath("org.jetbrains.dokka:dokka-base:1.8.20")
         classpath("com.android.tools.build:gradle:7.2.2")
         classpath("com.google.protobuf:protobuf-gradle-plugin:0.9.1")
         classpath("com.squareup.sqldelight:gradle-plugin:1.5.4")
