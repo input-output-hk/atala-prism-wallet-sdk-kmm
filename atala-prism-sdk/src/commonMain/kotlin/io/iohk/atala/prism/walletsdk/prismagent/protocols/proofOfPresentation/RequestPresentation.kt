@@ -25,6 +25,7 @@ import kotlinx.serialization.json.Json
  * @property from The DID of the sender of the request.
  * @property to The DID of the recipient of the request.
  */
+@Serializable
 data class RequestPresentation(
     val id: String = UUID.randomUUID4().toString(),
     val body: Body,

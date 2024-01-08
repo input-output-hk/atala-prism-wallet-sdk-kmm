@@ -5,6 +5,7 @@ plugins {
     id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
     id("org.jetbrains.dokka") version "1.9.0"
+    id("org.jetbrains.kotlin.kapt") version "1.9.10"
 }
 
 buildscript {
@@ -43,13 +44,6 @@ allprojects {
         }
         maven {
             this.url = uri("https://maven.pkg.github.com/input-output-hk/atala-prism-apollo")
-            credentials {
-                this.username = System.getenv("ATALA_GITHUB_ACTOR")
-                this.password = System.getenv("ATALA_GITHUB_TOKEN")
-            }
-        }
-        maven {
-            this.url = uri("https://maven.pkg.github.com/input-output-hk/atala-prism-didcomm-kmm")
             credentials {
                 this.username = System.getenv("ATALA_GITHUB_ACTOR")
                 this.password = System.getenv("ATALA_GITHUB_TOKEN")
@@ -118,8 +112,4 @@ subprojects {
             }
         }
     }
-}
-
-tasks.dokkaGfmMultiModule.configure {
-    outputDirectory.set(buildDir.resolve("dokkaCustomMultiModuleOutput"))
 }
