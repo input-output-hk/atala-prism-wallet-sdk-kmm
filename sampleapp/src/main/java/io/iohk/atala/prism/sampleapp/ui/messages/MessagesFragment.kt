@@ -1,6 +1,7 @@
 package io.iohk.atala.prism.sampleapp.ui.messages
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,12 @@ class MessagesFragment : Fragment() {
         binding.list.adapter = adapter
         binding.sendMessage.setOnClickListener {
             viewModel.sendMessage()
+        }
+        binding.sendVerification.setOnClickListener {
+            InitiateVerificationDialogFragment(viewModel).show(
+                parentFragmentManager,
+                "InitiateVerificationDialogFragment"
+            )
         }
         setupStreamObservers()
     }
