@@ -6,6 +6,7 @@ import anoncreds_wrapper.CredentialOffer
 import anoncreds_wrapper.CredentialRequestMetadata
 import anoncreds_wrapper.LinkSecret
 import io.iohk.atala.prism.apollo.base64.base64UrlDecoded
+import io.iohk.atala.prism.apollo.base64.base64UrlDecodedBytes
 import io.iohk.atala.prism.apollo.base64.base64UrlEncoded
 import io.iohk.atala.prism.apollo.utils.KMMEllipticCurve
 import io.iohk.atala.prism.walletsdk.apollo.utils.Ed25519KeyPair
@@ -1155,23 +1156,8 @@ class PrismAgent {
 
             val assertionMethod = diddoc.coreProperties.find { it::class == DIDDocument.AssertionMethod::class }
             (assertionMethod as DIDDocument.AssertionMethod).verificationMethods.first().publicKeyJwk?.let { jwk ->
-
-                if (jwk.containsKey("x") && jwk.containsKey("y")) {
-                    val x = jwk["x"]!!.base64UrlDecoded
-                    val y = jwk["y"]!!.base64UrlDecoded
-                    val ecPoint = ECPoint(BigInteger(x), BigInteger(y))
-                    val curveName = KMMEllipticCurve.SECP256k1.value
-                    val sp = ECNamedCurveTable.getParameterSpec(curveName)
-                    val params: ECParameterSpec = ECNamedCurveSpec(sp.name, sp.curve, sp.g, sp.n, sp.h)
-
-                    val publicKeySpec = ECPublicKeySpec(ecPoint, params)
-                    val keyFactory = KeyFactory.getInstance(EC, BouncyCastleProvider())
-                    val ecPublicKey = keyFactory.generatePublic(publicKeySpec) as ECPublicKey
-
-                    pollux.verifyPresentationSubmissionJWT(jws, ecPublicKey)
-                } else {
-                    false
-                }
+                val ecPublicKey = pollux.extractEcPublicKeyFromJwk(jwk)
+                pollux.verifyPresentationSubmissionJWT(jws, ecPublicKey)
             } ?: false
         } ?: false
         return isProofVerified && isJWTVerified

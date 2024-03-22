@@ -18,6 +18,7 @@ import anoncreds_wrapper.Schema
 import anoncreds_wrapper.SchemaId
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
+import com.nimbusds.jose.JWSVerifier
 import com.nimbusds.jose.crypto.ECDSASigner
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
@@ -25,6 +26,7 @@ import com.nimbusds.jose.util.Base64URL
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.iohk.atala.prism.apollo.base64.base64UrlDecoded
+import io.iohk.atala.prism.apollo.base64.base64UrlDecodedBytes
 import io.iohk.atala.prism.apollo.utils.KMMEllipticCurve
 import io.iohk.atala.prism.walletsdk.apollo.utils.Ed25519PublicKey
 import io.iohk.atala.prism.walletsdk.apollo.utils.Secp256k1PrivateKey
@@ -719,13 +721,40 @@ class PolluxImpl(
         } ?: throw PolluxError.RequestMissingField("subject")
     }
 
-    override suspend fun verifyPresentationSubmissionJWT(jwt: String, publicKey: PublicKey): Boolean {
-        val ecPublicKey = parsePublicKey(publicKey)
+    override suspend fun verifyPresentationSubmissionJWT(jwt: String, ecPublicKey: ECPublicKey): Boolean {
+        // Sign the JWT with the private key
         val jwtParts = jwt.split(".")
         val jwsObject = SignedJWT(Base64URL(jwtParts[0]), Base64URL(jwtParts[1]), Base64URL(jwtParts[2]))
-
         val verifiers = ECDSAVerifier(ecPublicKey)
+        val provider = BouncyCastleProviderSingleton.getInstance()
+        verifiers.jcaContext.provider = provider
 
         return jwsObject.verify(verifiers)
+    }
+
+    override suspend fun extractEcPublicKeyFromJwk(jwk: Map<String, String>): ECPublicKey {
+        val missingFields = mutableListOf<String>()
+        if (!jwk.containsKey("x")) {
+            missingFields.add("x")
+        }
+        if (!jwk.containsKey("y")) {
+            missingFields.add("y")
+        }
+        if (!jwk.containsKey("crv")) {
+            missingFields.add("crv")
+        }
+        if (missingFields.isEmpty()) {
+            val x = BigInteger(1, jwk["x"]!!.base64UrlDecodedBytes)
+            val y = BigInteger(1, jwk["y"]!!.base64UrlDecodedBytes)
+            val ecPoint = ECPoint(x, y)
+            val curveName = jwk["crv"]
+            val sp = ECNamedCurveTable.getParameterSpec(curveName)
+            val params: ECParameterSpec = ECNamedCurveSpec(sp.name, sp.curve, sp.g, sp.n, sp.h)
+
+            val publicKeySpec = ECPublicKeySpec(ecPoint, params)
+            val keyFactory = KeyFactory.getInstance(EC, BouncyCastleProvider())
+            return keyFactory.generatePublic(publicKeySpec) as ECPublicKey
+        }
+        throw PolluxError.MissingJWKFields(missingFields)
     }
 }

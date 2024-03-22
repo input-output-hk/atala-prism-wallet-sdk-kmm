@@ -21,6 +21,7 @@ import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.Pr
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.PresentationSubmission
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.ProofTypes
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.RequestPresentation
+import java.security.interfaces.ECPublicKey
 import kotlinx.serialization.json.JsonObject
 
 class PolluxMock : Pollux {
@@ -100,12 +101,14 @@ class PolluxMock : Pollux {
         presentationDefinitionRequest: PresentationDefinitionRequest,
         credential: Credential,
         did: DID,
-        privateKey: PrivateKey
+        privateKey: PrivateKey,
+        challenge: String,
+        domain: String?
     ): PresentationSubmission {
         TODO("Not yet implemented")
     }
 
-    override suspend fun verifyPresentationSubmissionJWT(jwt: String, publicKey: PublicKey): Boolean {
+    override suspend fun verifyPresentationSubmissionJWT(jwt: String, ecPublicKey: ECPublicKey): Boolean {
         TODO("Not yet implemented")
     }
 }

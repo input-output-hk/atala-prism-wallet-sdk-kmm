@@ -20,6 +20,7 @@ import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.Pr
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.PresentationSubmission
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.ProofTypes
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.RequestPresentation
+import java.security.interfaces.ECPublicKey
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -146,5 +147,7 @@ interface Pollux {
         domain: String? = "N/A"
     ): PresentationSubmission
 
-    suspend fun verifyPresentationSubmissionJWT(jwt: String, publicKey: PublicKey): Boolean
+    suspend fun verifyPresentationSubmissionJWT(jwt: String, ecPublicKey: ECPublicKey): Boolean
+
+    suspend fun extractEcPublicKeyFromJwk(jwk: Map<String, String>): ECPublicKey
 }

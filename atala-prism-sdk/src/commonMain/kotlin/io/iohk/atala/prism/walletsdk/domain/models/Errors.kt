@@ -824,4 +824,14 @@ constructor(
         override val code: Int
             get() = 56
     }
+
+    /**
+     * A class representing an error when a field is missing on a received request.
+     *
+     * @see PolluxError
+     */
+    class MissingJWKFields(missingFields: List<String>) : PolluxError("JWK is missing: ${missingFields.joinToString { ", " }}") {
+        override val code: Int
+            get() = 57
+    }
 }

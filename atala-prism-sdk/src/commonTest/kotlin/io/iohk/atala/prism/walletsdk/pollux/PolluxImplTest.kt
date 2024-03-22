@@ -18,6 +18,7 @@ import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.Pr
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.ProofTypes
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.W3cCredentialSubmission
 import io.ktor.http.HttpStatusCode
+import java.util.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.BeforeTest
@@ -78,14 +79,10 @@ class PolluxImplTest {
             options = PresentationOptions(
                 name = "Testing",
                 purpose = "Test presentation definition",
-                challenge = "1f44d55f-f161-4938-a659-f8026467f126",
-                domain = "domain",
                 jwtVpAlg = arrayOf("EcdsaSecp256k1Signature2019")
             )
         )
 
-        assertEquals("domain", definitionRequest.domain)
-        assertEquals("1f44d55f-f161-4938-a659-f8026467f126", definitionRequest.challenge)
         assertEquals(1, definitionRequest.presentationDefinitionBody.inputDescriptors.size)
         assertEquals(1, definitionRequest.presentationDefinitionBody.inputDescriptors.first().constraints.fields?.size)
         assertEquals(
@@ -126,7 +123,8 @@ class PolluxImplTest {
                 presentationDefinitionRequest = presentationDefinitionRequest,
                 credential = credential,
                 did = DID("did", "test", "123"),
-                privateKey = secpKeyPair.privateKey
+                privateKey = secpKeyPair.privateKey,
+                challenge = UUID.randomUUID().toString()
             )
         }
     }
@@ -148,7 +146,8 @@ class PolluxImplTest {
                     presentationDefinitionRequest = presentationDefinitionRequest,
                     credential = credential,
                     did = DID("did", "test", "123"),
-                    privateKey = nonSecpKeyPair.privateKey
+                    privateKey = nonSecpKeyPair.privateKey,
+                    challenge = UUID.randomUUID().toString()
                 )
             }
         }
@@ -171,7 +170,8 @@ class PolluxImplTest {
                 presentationDefinitionRequest = presentationDefinitionRequest,
                 credential = credential,
                 did = DID("did", "test", "123"),
-                privateKey = secpKeyPair.privateKey
+                privateKey = secpKeyPair.privateKey,
+                challenge = UUID.randomUUID().toString()
             )
 
             assertEquals(
