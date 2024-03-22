@@ -50,7 +50,7 @@ class AnoncredsTests {
         polluxMock = PolluxMock()
         mediationHandlerMock = MediationHandlerMock()
         // Pairing will be removed in the future
-        connectionManager = ConnectionManager(mercuryMock, castorMock, plutoMock, mediationHandlerMock, mutableListOf())
+        connectionManager = ConnectionManagerImpl(mercuryMock, castorMock, plutoMock, mediationHandlerMock, mutableListOf())
         json = Json {
             ignoreUnknownKeys = true
             prettyPrint = true

@@ -8,6 +8,8 @@ import io.iohk.atala.prism.walletsdk.prismagent.PROOF_TYPES
 import io.iohk.atala.prism.walletsdk.prismagent.PrismAgentError
 import io.iohk.atala.prism.walletsdk.prismagent.WILL_CONFIRM
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.ProtocolType
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -31,7 +33,8 @@ data class RequestPresentation(
     val attachments: Array<AttachmentDescriptor>,
     val thid: String? = null,
     val from: DID,
-    val to: DID
+    val to: DID,
+    val direction: Message.Direction = Message.Direction.RECEIVED
 ) {
 
     val type = ProtocolType.DidcommRequestPresentation.value
@@ -51,7 +54,8 @@ data class RequestPresentation(
             to = this.to,
             body = Json.encodeToString(this.body),
             attachments = this.attachments,
-            thid = this.thid
+            thid = this.thid,
+            direction = direction
         )
     }
 
@@ -123,11 +127,12 @@ data class RequestPresentation(
             ) {
                 return RequestPresentation(
                     id = fromMessage.id,
-                    body = Json.decodeFromString(fromMessage.body),
+                    body = Json.decodeFromString(fromMessage.body) ?: Body(proofTypes = emptyArray()),
                     attachments = fromMessage.attachments,
                     thid = fromMessage.thid,
                     from = fromMessage.from,
-                    to = fromMessage.to
+                    to = fromMessage.to,
+                    direction = fromMessage.direction
                 )
             } else {
                 throw PrismAgentError.InvalidMessageType(
@@ -159,7 +164,8 @@ data class RequestPresentation(
                 attachments = request.attachments,
                 thid = msg.id,
                 from = request.to,
-                to = request.from
+                to = request.from,
+                direction = msg.direction
             )
         }
     }
@@ -173,14 +179,17 @@ data class RequestPresentation(
      * @property proofTypes An array of proof types.
      */
     @Serializable
-    data class Body @JvmOverloads constructor(
+    @OptIn(ExperimentalSerializationApi::class)
+    data class Body
+    @JvmOverloads constructor(
         @SerialName(GOAL_CODE)
         val goalCode: String? = null,
         val comment: String? = null,
         @SerialName(WILL_CONFIRM)
         val willConfirm: Boolean? = false,
+        @EncodeDefault
         @SerialName(PROOF_TYPES)
-        val proofTypes: Array<ProofTypes>
+        val proofTypes: Array<ProofTypes>? = emptyArray()
     ) {
         /**
          * Checks if this [Body] object is equal to the specified [other] object.

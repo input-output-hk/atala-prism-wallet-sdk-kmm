@@ -12,10 +12,16 @@ import io.iohk.atala.prism.walletsdk.domain.models.CredentialType
 import io.iohk.atala.prism.walletsdk.domain.models.DID
 import io.iohk.atala.prism.walletsdk.domain.models.StorableCredential
 import io.iohk.atala.prism.walletsdk.domain.models.keyManagement.PrivateKey
+import io.iohk.atala.prism.walletsdk.domain.models.keyManagement.PublicKey
 import io.iohk.atala.prism.walletsdk.pollux.models.AnonCredential
 import io.iohk.atala.prism.walletsdk.pollux.models.CredentialRequest
 import io.iohk.atala.prism.walletsdk.pollux.models.CredentialRequestMeta
+import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.PresentationDefinitionRequest
+import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.PresentationOptions
+import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.PresentationSubmission
+import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.ProofTypes
 import io.iohk.atala.prism.walletsdk.prismagent.protocols.proofOfPresentation.RequestPresentation
+import java.security.interfaces.ECPublicKey
 import kotlinx.serialization.json.JsonObject
 
 class PolluxMock : Pollux {
@@ -80,6 +86,29 @@ class PolluxMock : Pollux {
     }
 
     override suspend fun getSchema(schemaId: String): Schema {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createPresentationDefinitionRequest(
+        type: CredentialType,
+        proofs: Array<ProofTypes>,
+        options: PresentationOptions
+    ): PresentationDefinitionRequest {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createPresentationSubmission(
+        presentationDefinitionRequest: PresentationDefinitionRequest,
+        credential: Credential,
+        did: DID,
+        privateKey: PrivateKey,
+        challenge: String,
+        domain: String?
+    ): PresentationSubmission {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun verifyPresentationSubmissionJWT(jwt: String, ecPublicKey: ECPublicKey): Boolean {
         TODO("Not yet implemented")
     }
 }
