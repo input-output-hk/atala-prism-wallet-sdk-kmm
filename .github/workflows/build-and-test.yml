@@ -62,11 +62,11 @@ jobs:
       - name: Build for JS, Android, JVM
         run: ./gradlew build allTests koverXmlReportRelease koverHtmlReportRelease --stacktrace
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          file: "${{ github.workspace }}/edge-agent-sdk/build/reports/android/result.xml"
-          github-token: ${{ secrets.IDENTUS_CI }}
+#      - name: Coveralls
+#        uses: coverallsapp/github-action@v2
+#        with:
+#          file: "${{ github.workspace }}/edge-agent-sdk/build/reports/android/result.xml"
+#          github-token: ${{ secrets.IDENTUS_CI }}
 
       - name: Publish test results
         if: always()
