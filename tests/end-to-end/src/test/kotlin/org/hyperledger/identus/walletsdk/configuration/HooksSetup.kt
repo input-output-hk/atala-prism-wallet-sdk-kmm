@@ -25,8 +25,14 @@ class HooksSetup {
             UseWalletSdk()
         )
 
+        cast.actorNamed("Verifier Edge Agent",
+            CallAnApi.at(Environment.mediatorOobUrl),
+            UseWalletSdk()
+        )
+
         cast.actorNamed("Cloud Agent",
-            CallAnApi.at(Environment.agentUrl)
+            CallAnApi.at(Environment.agentUrl),
+            UseWalletSdk()
         )
 
         OnStage.setTheStage(cast)
